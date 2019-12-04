@@ -1,0 +1,21 @@
+{% extends "bidding/base.html" %}
+{% load static %}
+
+{% block content %}
+    <br><br><br>
+    <div class="container" style="width:40%;padding:30px;background: white">
+    <center><h2>Homepage</h2></center><br>
+    <a href="{% url 'bidding:user_bid' pk %}"><button>Edit/Make your Bid</button></a>
+    {% if bidded_list %}
+    {% for bidded in bidded_list %}
+        <h5>Name:{{ bidded.name }}</h5>
+        <h5>Cost:{{ bidded.cost }}</h5>
+        <h5>Days:{{ bidded.days }}</h5>
+        <br><br>
+    {% endfor %}
+    {% endif %}
+    </div>
+
+
+
+{% endblock %}
