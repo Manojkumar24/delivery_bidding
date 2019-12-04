@@ -1,0 +1,16 @@
+{% extends "bidding/base.html" %}
+{% load static %}
+
+{% block content %}
+    <br><br><br>
+    <div class="container" style="width:40%;padding:30px;background: white">
+    <center><h2>Register</h2></center><br>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}<br>
+        <center><input type="submit" value="Submit"></center>
+
+  </form>
+</div>
+
+{% endblock %}
