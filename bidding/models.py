@@ -18,9 +18,10 @@ class biddedAmount(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     days = models.PositiveIntegerField()
     cost = models.FloatField()
+    pincode = models.PositiveIntegerField()
 
     class Meta:
-        unique_together = ('name', 'product')
+        unique_together = ('product', 'name', 'pincode')
 
     def __str__(self):
         return self.name.username

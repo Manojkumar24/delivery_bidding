@@ -42,4 +42,10 @@ class RegisterForm(forms.ModelForm):
 class BiddingForm(forms.ModelForm):
     class Meta:
         model = biddedAmount
-        fields = ['days', 'cost']
+        fields = ['days', 'cost', 'pincode']
+
+    def clean_pincode(self):
+        pincode = self.cleaned_data['pincode']
+        if len(str(pincode)) != 6:
+            raise forms.ValidationError("Passwords do not match!")
+        return pincode
