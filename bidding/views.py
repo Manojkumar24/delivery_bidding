@@ -15,14 +15,16 @@ def home(request):
     url = 'http://127.0.0.1:8000/shopping/product_list'
     response = requests.get(url)
     products = response.json()
-
-    Product.objects.all().delete()
+    print('in home')
     for product in products:
-        p = Product.objects.create(prod_name=product['prod_name'],
-                                   prod_id=product['pk'],
-                                   description=product['description'],
-                                   weight=product['weight'])
-        p.save()
+        if not Product.objects.filter(prod_name=product['prod_name'],
+                                   prod_id=product['pk']).exists():
+            print('added new product')
+            p = Product.objects.create(prod_name=product['prod_name'],
+                                       prod_id=product['pk'],
+                                       description=product['description'],
+                                       weight=product['weight'])
+            p.save()
 
     prod_list = Product.objects.all()
     return render(request, 'bidding/homepage.html', {'prod_list': prod_list})
@@ -84,6 +86,7 @@ def delete_bid_list(request, p_id, pincode):
                 {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
                  'pincode': pincode,
                  'msg': 'delete', 'days': instance.days, 'cost': instance.cost, })
+            print('sending to sportshub')
             requests.post(url=url, data=data)
             instance.delete()
         except:
@@ -99,7 +102,7 @@ def edit_bid_list(request, p_id, pincode):
         if request.method == 'POST':
             form = BiddingForm(request.POST)
             if form.is_valid():
-                product = Product.objects.get(prod_id=p_id)
+                product = Product.objects.get(pk=p_id)
                 name = request.user
                 days = form.cleaned_data['days']
                 cost = form.cleaned_data['cost']
