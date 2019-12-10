@@ -3,16 +3,13 @@ import json
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 import requests
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
-from django.urls import reverse
-
-from bidding.models import Product, biddedAmount
+from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
+from bidding.models import Product, biddedAmount, pending_orders
 from .forms import RegisterForm, BiddingForm
 
 
@@ -22,14 +19,18 @@ def home(request):
     response = requests.get(url)
     products = response.json()
 
-    Product.objects.all().delete()
     for product in products:
-        p = Product.objects.create(prod_name=product['prod_name'],
-                                   prod_id=product['pk'],
-                                   description=product['description'],
-                                   weight=product['weight'])
-        p.save()
-
+        if not Product.objects.filter(prod_name=product['prod_name'], prod_id=product['pk']).exists():
+            p = Product.objects.create(prod_name=product['prod_name'],
+                                       prod_id=product['pk'],
+                                       description=product['description'],
+                                       weight=product['weight'])
+            p.save()
+        else:
+            p = Product.objects.filter(prod_name=product['prod_name'], prod_id=product['pk'])
+            p[0].description = product['description'],
+            p[0].weight = product['weight']
+            p[0].save()
     prod_list = Product.objects.all()
     return render(request, 'bidding/homepage.html', {'prod_list': prod_list})
 
@@ -87,8 +88,10 @@ def delete_bid_list(request, p_id, pincode):
             url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
             data = json.dumps(
-                {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id, 'pincode': pincode,
-                 'msg': 'delete', 'days': instance.days, 'cost': instance.cost,})
+                {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
+                 'pincode': pincode,
+                 'msg': 'delete', 'days': instance.days, 'cost': instance.cost, })
+
             requests.post(url=url, data=data)
             instance.delete()
         except:
@@ -120,8 +123,9 @@ def edit_bid_list(request, p_id, pincode):
 
                 url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
-                data = json.dumps({'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
-                                   'days': days, 'cost': cost, 'pincode': pincode})
+                data = json.dumps(
+                    {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
+                     'days': days, 'cost': cost, 'pincode': pincode})
                 requests.post(url=url, data=data)
                 return redirect('bidding:user_bid_list')
 
@@ -156,3 +160,28 @@ def user_bid(request, p_id):
                 requests.post(url=url, data=data)
                 return redirect('bidding:bid_list', p_id)
         return render(request, 'bidding/user_bid.html', {'form': form})
+
+
+@api_view(['POST'])
+def ordered_log(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        # t = Tournaments.objects.get(name=data['tournament'])
+        # data['tournament'] = t.pk
+
+        # tournament = get_object_or_404(Tournaments, title=request.data.get('tournament'))
+        product = data['product']
+        name = data['name']
+        pincode = data['pincode']
+        product_name = data['prod_name']
+        address = data['address']
+        phonenum = data['phonenum']
+        customer_name = data['customer_name']
+        try:
+            user = biddedAmount.objects.get(product__prod_id=product, name_id=name, pincode=pincode)
+            pending_orders.objects.create(product=product_name, address=address, pincode=pincode, phone_num=phonenum,
+                                          customer=customer_name, name=user.name)
+
+            return Response({'created'}, status=status.HTTP_201_CREATED)
+        except:
+            return Response({'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
