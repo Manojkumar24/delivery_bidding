@@ -2,14 +2,38 @@
 {% load static %}
 
 {% block content %}
-    <br><br><br>
-    <div class="container" style="width:40%;padding:30px;background: white">
-    <center><h2>Log In</h2></center><br>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}<br>
-    <center><input type="submit" value="Submit"></center>
-  </form>
-</div>
+
+    <div class="banner-area">
+
+        <!-- Backgound Image -->
+        <div class="bg-image bg-parallax overlay" style="background-image:url({% static 'img/background01.jpg' %})"></div>
+        <!-- /Backgound Image -->
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="white-text title">Log In</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="blog" class="section" style="padding-bottom: 150px">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="blog-reply-form">
+                          <h3 class="title" style="color:black">Log In</h3>
+                          <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}<br>
+                            <center><input type="submit" class="button" value="Log In"></center>
+                          </form>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
 
 {% endblock %}

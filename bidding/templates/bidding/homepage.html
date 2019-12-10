@@ -2,19 +2,57 @@
 {% load static %}
 
 {% block content %}
-    <br><br><br>
-    <div class="container" style="width:40%;padding:30px;background: white">
-    <center><h2>Homepage</h2></center><br>
-    {% if prod_list %}
-    {% for product in prod_list %}
-        <h5>Product Name:{{ product.prod_name }}</h5>
-        <h5>Product Description:{{ product.description }}</h5>
-        <h5>Product weight:{{ product.weigth }}</h5>
-        <a href="{% url 'bidding:bid_list' product.prod_id %}"><button>Bid</button></a><br><br><br><br><br><br>
-    {% endfor %}
-    {% endif %}
-    </div>
 
+    <!-- Home -->
+		<div id="home" class="banner-area">
 
+			<!-- Backgound Image -->
+			<div class="bg-image bg-parallax overlay" style="background-image:url({% static "img/main-img1.jpg" %})"></div>
+			<!-- /Backgound Image -->
+
+			<div class="home-wrapper">
+
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<div class="home-content">
+						<h1 class="white-text">Welcome!!</h1>
+                        <h4 class="white-text lead">oiii nen legise munde start cheseste, first git lo nen create chesina issues ni resolve cheyandi. Baaga late ayi nen legakapote nennu lepandi pls :-(</h4>
+                        <h4 class="white-text lead">Compete with other bidders in delivering products from several vendors across country.</h4>
+                            <h4 class="white-text lead">Bid on products to any pincode based on your available delivery services. Enter your delivery charges and the estimated time of delivery to that pincode. Happy Bidding...!! </h4>
+                        <a href="#events"><button class="main-button">Start Bidding</button></a>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+		<!-- /Home -->
+
+        <div id="events" class="section">
+            <div class="container">
+                <div class="row">
+					<!-- section header -->
+					<div class="section-header text-center">
+						<h4 class="sub-title">Our Products</h4>
+						<h2 class="title">Products from Various Retailers </h2>
+					</div>
+					<!-- /section header -->
+                    {% if prod_list %}
+                        {% for product in prod_list %}
+                            <div class="col-md-4">
+                                <div class="event">
+                                    <a href="{% url 'bidding:bid_list' product.prod_id %}">
+                                    <div class="event-content" style="border: 1px solid #d9d9d9;padding: 20px;border-radius: 8px;">
+                                        <h3>{{ product.prod_name }}</h3>
+                                        <p>{{ product.description }}</p>
+                                        <h5>Product Weight : {{ product.weigth }} Kgs</h5>
+                                    </div>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+				</div>
+			</div>
+		</div>
 
 {% endblock %}
