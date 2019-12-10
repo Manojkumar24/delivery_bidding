@@ -10,7 +10,7 @@
         <h5>Product Name:{{ product.prod_name }}</h5>
         <h5>Product Description:{{ product.description }}</h5>
         <h5>Product weight:{{ product.weigth }}</h5>
-        <a href="{% url 'bidding:bid_list' product.pk %}"><button>Bid</button></a><br><br><br><br><br><br>
+        <a href="{% url 'bidding:bid_list' product.prod_id %}"><button>Bid</button></a><br><br><br><br><br><br>
     {% endfor %}
     {% endif %}
     </div>
