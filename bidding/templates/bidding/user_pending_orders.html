@@ -1,0 +1,22 @@
+{% extends "bidding/base.html" %}
+{% load static %}
+
+{% block content %}
+    <br><br><br>
+    <div class="container" style="width:40%;padding:30px;background: white">
+    <center><h2>Pending orders</h2></center><br>
+    {% if orders %}
+    {% for order in orders %}
+        <h5>Customer name:{{ order.customer }}</h5>
+        <h5>Product name:{{ order.product }}</h5>
+        <h5>Address:{{ order.address }}</h5>
+        <h5>Pincode:{{ order.pincode }}</h5>
+        <h5>Phone number: {{ order.phone_num }}</h5>
+        <br><br>
+    {% endfor %}
+    {% endif %}
+    </div>
+
+
+
+{% endblock %}

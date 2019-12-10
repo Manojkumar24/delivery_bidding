@@ -19,8 +19,12 @@ def home(request):
     response = requests.get(url)
     products = response.json()
 
+    print('in home')
     for product in products:
-        if not Product.objects.filter(prod_name=product['prod_name'], prod_id=product['pk']).exists():
+        if not Product.objects.filter(prod_name=product['prod_name'],
+                                      prod_id=product['pk']).exists():
+            print('added new product')
+
             p = Product.objects.create(prod_name=product['prod_name'],
                                        prod_id=product['pk'],
                                        description=product['description'],
@@ -91,6 +95,7 @@ def delete_bid_list(request, p_id, pincode):
                 {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
                  'pincode': pincode,
                  'msg': 'delete', 'days': instance.days, 'cost': instance.cost, })
+            print('sending to sportshub')
 
             requests.post(url=url, data=data)
             instance.delete()
@@ -107,7 +112,7 @@ def edit_bid_list(request, p_id, pincode):
         if request.method == 'POST':
             form = BiddingForm(request.POST)
             if form.is_valid():
-                product = Product.objects.get(prod_id=p_id)
+                product = Product.objects.get(pk=p_id)
                 name = request.user
                 days = form.cleaned_data['days']
                 cost = form.cleaned_data['cost']
@@ -177,11 +182,24 @@ def ordered_log(request):
         address = data['address']
         phonenum = data['phonenum']
         customer_name = data['customer_name']
+        print('prod_id', product)
+        print('name_id', name)
+        print('pincode', pincode)
+        print('in ordered log')
         try:
+
             user = biddedAmount.objects.get(product__prod_id=product, name_id=name, pincode=pincode)
+            print('got user')
             pending_orders.objects.create(product=product_name, address=address, pincode=pincode, phone_num=phonenum,
                                           customer=customer_name, name=user.name)
-
+            print('created pending order')
             return Response({'created'}, status=status.HTTP_201_CREATED)
         except:
+            print('bad request')
             return Response({'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@login_required
+def user_pending_orders(request):
+    pendingorders = pending_orders.objects.filter(name=request.user)
+    return render(request, 'bidding/user_pending_orders.html', {'orders': pendingorders})

@@ -160,8 +160,9 @@
         </div>
         <ul class="nav navbar-nav" style="text-align:right">
             <li class="active"><a href="{% url 'bidding:home' %}">Home</a></li>
-            <li class="active"><a href="{% url 'bidding:user_bid_list' %}">Your Bids</a></li>
             {% if request.user.is_authenticated %}
+                <li class="active"><a href="{% url 'bidding:user_bid_list' %}">Your Bids</a></li>
+                <li class="active"><a href="{% url 'bidding:user_pending_orders' %}">Your pending orders</a></li>
                 <li><a href="{% url 'bidding:logout_user' %}">Log Out</a></li>
             {% else %}
                 <li><a href="{% url 'bidding:login' %}">Log In</a></li>

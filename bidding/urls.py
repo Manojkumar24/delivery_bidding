@@ -13,6 +13,7 @@ urlpatterns = [
     path('edit_bid_list/<int:p_id>/<int:pincode>', views.edit_bid_list, name='edit_bid_list'),
     path('delete_bid_list/<int:p_id>/<int:pincode>', views.delete_bid_list, name='delete_bid_list'),
     path('user_bid_list/', views.user_bid_list, name='user_bid_list'),
+    path('user_pending_orders/', views.user_pending_orders, name='user_pending_orders'),
     path('ordered_log/', views.ordered_log, name='ordered_log'),
 
 
