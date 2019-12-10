@@ -22,13 +22,13 @@ def home(request):
     response = requests.get(url)
     products = response.json()
 
+    Product.objects.all().delete()
     for product in products:
-        if not Product.objects.filter(prod_name=product['prod_name'], prod_id=product['pk']).exists():
-            p = Product.objects.create(prod_name=product['prod_name'],
-                                       prod_id=product['pk'],
-                                       description=product['description'],
-                                       weight=product['weight'])
-            p.save()
+        p = Product.objects.create(prod_name=product['prod_name'],
+                                   prod_id=product['pk'],
+                                   description=product['description'],
+                                   weight=product['weight'])
+        p.save()
 
     prod_list = Product.objects.all()
     return render(request, 'bidding/homepage.html', {'prod_list': prod_list})
@@ -70,7 +70,7 @@ def register_user(request):
 @login_required
 def bid_list(request, p_id):
     if p_id:
-        bidded_list = biddedAmount.objects.filter(product__pk=p_id)
+        bidded_list = biddedAmount.objects.filter(product__prod_id=p_id)
         return render(request, 'bidding/bid_list.html', {'bidded_list': bidded_list, 'pk': p_id})
 
 
@@ -87,8 +87,8 @@ def delete_bid_list(request, p_id, pincode):
             url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
             data = json.dumps(
-                {'name': request.user.username, 'name_id': request.user.pk, 'product': p_id, 'pincode': pincode,
-                 'msg': 'delete'})
+                {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id, 'pincode': pincode,
+                 'msg': 'delete', 'days': instance.days, 'cost': instance.cost,})
             requests.post(url=url, data=data)
             instance.delete()
         except:
@@ -104,7 +104,7 @@ def edit_bid_list(request, p_id, pincode):
         if request.method == 'POST':
             form = BiddingForm(request.POST)
             if form.is_valid():
-                product = Product.objects.get(pk=p_id)
+                product = Product.objects.get(prod_id=p_id)
                 name = request.user
                 days = form.cleaned_data['days']
                 cost = form.cleaned_data['cost']
@@ -120,7 +120,7 @@ def edit_bid_list(request, p_id, pincode):
 
                 url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
-                data = json.dumps({'name': request.user.username, 'name_id': request.user.pk, 'product': p_id,
+                data = json.dumps({'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
                                    'days': days, 'cost': cost, 'pincode': pincode})
                 requests.post(url=url, data=data)
                 return redirect('bidding:user_bid_list')
@@ -135,7 +135,7 @@ def user_bid(request, p_id):
         if request.method == 'POST':
             form = BiddingForm(request.POST)
             if form.is_valid():
-                product = Product.objects.get(pk=p_id)
+                product = Product.objects.get(prod_id=p_id)
                 name = request.user
                 days = form.cleaned_data['days']
                 cost = form.cleaned_data['cost']
