@@ -3,14 +3,8 @@ import json
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 import requests
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
-from django.urls import reverse
 
 from bidding.models import Product, biddedAmount
 from .forms import RegisterForm, BiddingForm
@@ -87,8 +81,9 @@ def delete_bid_list(request, p_id, pincode):
             url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
             data = json.dumps(
-                {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id, 'pincode': pincode,
-                 'msg': 'delete', 'days': instance.days, 'cost': instance.cost,})
+                {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
+                 'pincode': pincode,
+                 'msg': 'delete', 'days': instance.days, 'cost': instance.cost, })
             requests.post(url=url, data=data)
             instance.delete()
         except:
@@ -120,8 +115,9 @@ def edit_bid_list(request, p_id, pincode):
 
                 url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
-                data = json.dumps({'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
-                                   'days': days, 'cost': cost, 'pincode': pincode})
+                data = json.dumps(
+                    {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
+                     'days': days, 'cost': cost, 'pincode': pincode})
                 requests.post(url=url, data=data)
                 return redirect('bidding:user_bid_list')
 
