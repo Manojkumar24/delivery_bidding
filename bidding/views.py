@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from bidding.models import Product, biddedAmount, pending_orders
-from .forms import RegisterForm, BiddingForm
+from .forms import RegisterForm, BiddingForm, EditForm
 
 
 @login_required
@@ -75,13 +75,14 @@ def register_user(request):
 @login_required
 def bid_list(request, p_id):
     if p_id:
+        form = BiddingForm()
         bidded_list = biddedAmount.objects.filter(product__prod_id=p_id)
-        return render(request, 'bidding/bid_list.html', {'bidded_list': bidded_list, 'pk': p_id})
+        return render(request, 'bidding/bid_list.html', {'bidded_list': bidded_list, 'pk': p_id, 'form': form})
 
 
 def user_bid_list(request):
     bidded_list = biddedAmount.objects.filter(name=request.user)
-    return render(request, 'bidding/user_bid_list.html', {'bidded_list': bidded_list, })
+    return render(request, 'bidding/user_bid_list.html', {'bidded_list': bidded_list})
 
 
 def delete_bid_list(request, p_id, pincode):
@@ -108,24 +109,18 @@ def edit_bid_list(request, p_id, pincode):
     if p_id and pincode:
         product = Product.objects.get(pk=p_id)
         instance = biddedAmount.objects.get(product=product, name=request.user, pincode=pincode)
-        form = BiddingForm(instance=instance)
+        form = EditForm(instance=instance)
         if request.method == 'POST':
-            form = BiddingForm(request.POST)
+            form = EditForm(request.POST)
             if form.is_valid():
                 product = Product.objects.get(pk=p_id)
                 name = request.user
                 days = form.cleaned_data['days']
                 cost = form.cleaned_data['cost']
-                pincode = form.cleaned_data['pincode']
-                if biddedAmount.objects.filter(product=product, name=request.user, pincode=pincode).exists():
-                    instance = biddedAmount.objects.get(product=product, name=request.user, pincode=pincode)
-                    instance.days = days
-                    instance.cost = cost
-                    instance.save()
-                else:
-                    biddedAmount.objects.create(name=name, product=product, days=days,
-                                                cost=cost, pincode=pincode)
-
+                instance = biddedAmount.objects.get(product=product, name=request.user, pincode=pincode)
+                instance.days = days
+                instance.cost = cost
+                instance.save()
                 url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
                 data = json.dumps(
