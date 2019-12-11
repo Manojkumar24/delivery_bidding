@@ -43,9 +43,24 @@ class BiddingForm(forms.ModelForm):
     class Meta:
         model = biddedAmount
         fields = ['days', 'cost', 'pincode']
+        labels = {
+            'cost': 'Cost(in rupees):',
+            'days': 'Estimated Number of Days :',
+            'pincode': 'Delivery Pincode :'
+        }
 
     def clean_pincode(self):
         pincode = self.cleaned_data['pincode']
         if len(str(pincode)) != 6:
             raise forms.ValidationError("Passwords do not match!")
         return pincode
+
+
+class EditForm(forms.ModelForm):
+    class Meta:
+        model = biddedAmount
+        fields = ['days', 'cost']
+        labels = {
+            'cost': 'Cost(in rupees):',
+            'days': 'Estimated Number of Days :',
+        }
