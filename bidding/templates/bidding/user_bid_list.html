@@ -2,23 +2,59 @@
 {% load static %}
 
 {% block content %}
-    <br><br><br>
-    <div class="container" style="width:40%;padding:30px;background: white">
-    <center><h2>Your Bids</h2></center><br>
-    {% if bidded_list %}
-    {% for bidded in bidded_list %}
-        <h5>Name:{{ bidded.name }}</h5>
-        <h5>Product:{{ bidded.product }}</h5>
-        <h5>Cost:{{ bidded.cost }}</h5>
-        <h5>Days:{{ bidded.days }}</h5>
-        <h5>Pincode:{{ bidded.pincode }}</h5>
-        <a href="{% url 'bidding:edit_bid_list' bidded.product_id    bidded.pincode %}"><button class="btn-primary">Edit</button></a><br>
-        <a href="{% url 'bidding:delete_bid_list' bidded.product_id    bidded.pincode %}"><button class="btn-primary">Delete</button></a><br>
-        <br><br>
-    {% endfor %}
-    {% endif %}
+
+    <div class="banner-area">
+
+        <!-- Backgound Image -->
+        <div class="bg-image bg-parallax overlay" style="background-image:url({% static 'img/blog-img.jpg' %});"></div>
+        <!-- /Backgound Image -->
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center"><br>
+                    <h2 class="white-text title">Your Biddings</h2>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div id="events" class="section">
+            <div class="container">
+                <div class="row">
+					<!-- section header -->
+					<div class="section-header text-center">
+						<h4 class="sub-title"></h4>
+						<h2 class="title">Your Product Biddings</h2>
+					</div>
+					<!-- /section header -->
+                    {% if bidded_list %}
+                        {% for bidded in bidded_list %}
+                            <div class="col-md-6">
+                                <div class="event">
+                                    <div class="event-content">
+                                        <h4>{{ bidded.name }}</h4>
+                                        <h4>{{ bidded.product }}</h4>
+                                        <p>Delivery Charges : {{ bidded.cost }}</p>
+                                        <p>Estimated delivery by {{ bidded.days }} working days to pincode {{ bidded.pincode }}.</p>
+                                        <a href="{% url 'bidding:edit_bid_list' bidded.product_id    bidded.pincode %}"><button class="btn-primary">Edit</button></a><br>
+                                        <a href="{% url 'bidding:delete_bid_list' bidded.product_id    bidded.pincode %}"><button class="btn-primary">Delete</button></a><br>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="home-wrapper">
+                            <div class="col-md-10 col-md-offset-1 text-center">
+                                <div class="home-content" style="padding-bottom: 33px">
+                                    <h4 class="lead">Oops..! Looks like you haven't bid on any products yet. Click here to start bidding on products according to your available services. </h4>
+                                    <a href="{% url 'bidding:home' %}"><button class="main-button">Go Bidding -></button></a>
+                                </div>
+                            </div>
 
+            			</div>
+                    {% endif %}
+				</div>
+			</div>
+		</div>
 
 {% endblock %}

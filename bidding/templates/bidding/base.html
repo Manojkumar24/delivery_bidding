@@ -1,198 +1,142 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Bidding</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+		<title>Delivery Bidding</title>
+
+		<!-- Google font -->
+		<link href="https://fonts.googleapis.com/css?family=Quicksand:400,700%7CCabin:400%7CDancing+Script" rel="stylesheet">
+
+		<!-- Bootstrap -->
+		<link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}"/>
+
+		<!-- Owl Carousel -->
+		<link type="text/css" rel="stylesheet" href="{% static 'css/owl.carousel.css' %}" />
+		<link type="text/css" rel="stylesheet" href="{% static 'css/owl.theme.default.css'%}" />
+
+		<!-- Font Awesome Icon -->
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" />
+
+		<!-- Custom stylesheet -->
+		<link type="text/css" rel="stylesheet" href="{% static 'css/style.css' %}"/>
+
+        <style>
+        </style>
+
+    </head>
+
+	<body>
+
+		<!-- Header -->
+		<header id="header">
+			<!-- Bottom nav -->
+			<div id="bottom-nav">
+				<div class="container">
+				<nav id="nav">
+
+					<!-- nav -->
+					<ul class="main-nav nav navbar-nav">
+                        <li class="white-text" style="color: black;font-weight: 700"><a href="{% url 'bidding:home' %}"><i>Delivery Squad</i></a></li>
+						<li><a href="{% url 'bidding:home' %}">Home</a></li>
+						{% if request.user.is_authenticated %}
+    						<li><a href="{% url 'bidding:user_bid_list' %}">Your Bids</a></li>
+                            <li><a href="{% url 'bidding:user_pending_orders' %}">Your pending orders</a></li>
+                        {% endif %}
+					</ul>
+					<!-- /nav -->
+
+					<!-- contact nav -->
+					<ul class="contact-nav nav navbar-nav">
+						{% if request.user.is_authenticated %}
+                            <li><a href="{% url 'bidding:logout_user' %}">Log Out</a></li>
+                        {% else %}
+                            <li><a href="{% url 'bidding:login' %}">Log In</a></li>
+                            <li><a href="{% url 'bidding:register_user' %}">Register</a></li>
+                        {% endif %}
+					</ul>
+					<!-- contact nav -->
+
+				</nav>
+				</div>
+			</div>
+			<!-- /Bottom nav -->
 
 
-    <style>
-        body {
-            background: #0575E6; /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #021B79, #0575E6); /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #021B79, #0575E6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-            height: 100%;
-            background-repeat: repeat;
-            background-size: cover;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        /* Float four columns side by side */
-        .column {
-            float: left;
-            width: 50%;
-            padding: 0 10px;
-        }
-
-        /* Remove extra left and right margins, due to padding */
-        .row {
-            margin: 0 -5px;
-        }
-
-        /* Clear floats after the columns */
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        /* Responsive columns */
-        @media screen and (max-width: 600px) {
-            .column {
-                width: 80%;
-                display: block;
-                margin-bottom: 20px;
-            }
-        }
-
-        /* Style the counter cards */
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            padding: 16px;
-            text-align: center;
-            background-color: white;
-        }
-
-        input[type=text], select {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-                        background-color: whitesmoke;
-
-        }
-
-        input[type=number], select {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-                        background-color: whitesmoke;
-
-        }
+		</header>
+		<!-- /Header -->
 
 
-        input[type=password], select {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-                        background-color: whitesmoke;
 
-        }
+        {% block content %}
 
-        input[type=email], select {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: whitesmoke;
-        }
+        {% endblock %}
 
 
-        input[type=submit] {
-            width: 40%;
-            background-color: #4CAF50;
-            color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-        }
 
-        input[type=submit]:hover {
-            background-color: #45a049;
-        }
+        <!-- Footer -->
+        <footer id="footer">
 
-        div.container {
-            border-radius: 5px;
-            background: #0575E6; /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #021B79, #0575E6); /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #021B79, #0575E6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-            padding: 20px;
-        }
+			<!-- container -->
+			<div class="container">
 
-        .sticky {
-          position: fixed;
-          top: 0;
-          width: 100%;
-        }
+				<!-- row -->
+				<div class="row">
 
-        .sticky + .content {
-          padding-top: 60px;
-        }
+					<!-- copyright -->
+					<div class="col-md-4">
 
-    </style>
+						<span class="copyright">Delivery Bidding</span>
 
-</head>
+					</div>
+					<!-- /copyright -->
 
+					<!-- footer nav -->
+					<div class="col-md-8">
+						<nav class="footer-nav">
+							<a href="#">Home</a>
+							<a href="#">Your Bids</a>
+							{% if request.user.is_authenticated %}
+                                <a href="{% url 'bidding:logout_user' %}">Log Out</a>
+                            {% else %}
+                                <a href="{% url 'bidding:login' %}">Log In</a>
+                                <a href="{% url 'bidding:register_user' %}">Register</a>
+                        {% endif %}
+						</nav>
+					</div>
+					<!-- /footer nav -->
 
-<body style="padding-bottom:130px">
-<div id="navbar" style="padding:10px 20px 0px 20px ">
-<nav  class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="{% url 'bidding:home' %}">WebSiteName</a>
-        </div>
-        <ul class="nav navbar-nav" style="text-align:right">
-            <li class="active"><a href="{% url 'bidding:home' %}">Home</a></li>
-            {% if request.user.is_authenticated %}
-                <li class="active"><a href="{% url 'bidding:user_bid_list' %}">Your Bids</a></li>
-                <li class="active"><a href="{% url 'bidding:user_pending_orders' %}">Your pending orders</a></li>
-                <li><a href="{% url 'bidding:logout_user' %}">Log Out</a></li>
-            {% else %}
-                <li><a href="{% url 'bidding:login' %}">Log In</a></li>
-                <li><a href="{% url 'bidding:register_user' %}">Register</a></li>
-            {% endif %}
-        </ul>
-    </div>
-</nav>
-</div>
-<div class="content">
-{% block content %}
+				</div>
+				<!-- /row -->
 
-{% endblock %}
-</div>
+			</div>
+			<!-- /container -->
 
-<script>
-window.onscroll = function() {myFunction()};
+		</footer>
+		<!-- /Footer -->
 
-var navbar = document.getElementById("navbar");
-var sticky = navbar.offsetTop;
+		<!-- Preloader -->
+		<div id="preloader">
+			<div class="preloader">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
+		<!-- /Preloader -->
 
-function myFunction() {
-  if (window.pageYOffset >= sticky) {
-    navbar.classList.add("sticky")
-  } else {
-    navbar.classList.remove("sticky");
-  }
-}
-</script>
+		<!-- jQuery Plugins -->
+		<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/owl.carousel.min.js' %}"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+		<script type="text/javascript" src="{% static 'js/google-map.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
 
-
-</body>
+	</body>
 </html>
+
