@@ -25,3 +25,15 @@ class biddedAmount(models.Model):
 
     def __str__(self):
         return self.name.username
+
+
+class pending_orders(models.Model):
+    product = models.CharField(max_length=150)
+    address = models.CharField(max_length=150)
+    pincode = models.PositiveIntegerField()
+    phone_num = models.PositiveIntegerField()
+    customer = models.CharField(max_length=150)
+    name = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name.username

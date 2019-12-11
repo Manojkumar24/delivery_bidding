@@ -41,10 +41,11 @@
 
 					<!-- nav -->
 					<ul class="main-nav nav navbar-nav">
-                        <li class="white-text" style="color: black"><a href="{% url 'bidding:home' %}"><i>Delivery Biddings</i></a></li>
+                        <li class="white-text" style="color: black;font-weight: 700"><a href="{% url 'bidding:home' %}"><i>Delivery Squad</i></a></li>
 						<li><a href="{% url 'bidding:home' %}">Home</a></li>
 						{% if request.user.is_authenticated %}
     						<li><a href="{% url 'bidding:user_bid_list' %}">Your Bids</a></li>
+                            <li><a href="{% url 'bidding:user_pending_orders' %}">Your pending orders</a></li>
                         {% endif %}
 					</ul>
 					<!-- /nav -->
@@ -138,3 +139,4 @@
 
 	</body>
 </html>
+
