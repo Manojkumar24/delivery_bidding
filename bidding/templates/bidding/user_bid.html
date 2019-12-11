@@ -2,15 +2,39 @@
 {% load static %}
 
 {% block content %}
-    <br><br><br>
-    <div class="container" style="width:40%;padding:30px;background: white">
-    <center><h2>Homepage</h2></center><br>
-    {% if form %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="submit">
-        </form>
-    {% endif %}
+
+    <div class="banner-area">
+
+        <!-- Backgound Image -->
+        <div class="bg-image bg-parallax overlay" style="background-image:url({% static 'img/blog-img.jpg' %})"></div>
+        <!-- /Backgound Image -->
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="white-text title">Make your Bid</h2>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div id="blog" class="section" style="padding-bottom: 190px">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="blog-reply-form">
+                          <h3 class="title" style="color:black">Make your Bid</h3>
+                          {% if form %}
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form }}
+                                <center><div style="padding-top:20px"><input type="submit" class="button" value="Submit"></div></center>
+                            </form>
+                          {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
