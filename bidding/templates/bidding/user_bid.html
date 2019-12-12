@@ -27,7 +27,7 @@
                           {% if form %}
                             <form method="post">
                                 {% csrf_token %}
-                                {{ form }}
+                                {{ form.as_p }}
                                 <center><div style="padding-top:20px"><input type="submit" class="button" value="Submit"></div></center>
                             </form>
                           {% endif %}
