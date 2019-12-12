@@ -85,16 +85,16 @@ def user_bid_list(request):
     return render(request, 'bidding/user_bid_list.html', {'bidded_list': bidded_list})
 
 
-def delete_bid_list(request, p_id, pincode):
-    if p_id and pincode:
+def delete_bid_list(request, p_id, location):
+    if p_id and location:
         try:
             product = Product.objects.get(pk=p_id)
-            instance = biddedAmount.objects.get(product=product, name=request.user, pincode=pincode)
+            instance = biddedAmount.objects.get(product=product, name=request.user, location=location.lower())
             url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
             data = json.dumps(
                 {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
-                 'pincode': pincode,
+                 'location': location.lower(),
                  'msg': 'delete', 'days': instance.days, 'cost': instance.cost, })
             print('sending to sportshub')
 
@@ -105,10 +105,10 @@ def delete_bid_list(request, p_id, pincode):
         return redirect('bidding:user_bid_list')
 
 
-def edit_bid_list(request, p_id, pincode):
-    if p_id and pincode:
+def edit_bid_list(request, p_id, location):
+    if p_id and location:
         product = Product.objects.get(pk=p_id)
-        instance = biddedAmount.objects.get(product=product, name=request.user, pincode=pincode)
+        instance = biddedAmount.objects.get(product=product, name=request.user, location=location.lower())
         form = EditForm(instance=instance)
         if request.method == 'POST':
             form = EditForm(request.POST)
@@ -117,7 +117,7 @@ def edit_bid_list(request, p_id, pincode):
                 name = request.user
                 days = form.cleaned_data['days']
                 cost = form.cleaned_data['cost']
-                instance = biddedAmount.objects.get(product=product, name=request.user, pincode=pincode)
+                instance = biddedAmount.objects.get(product=product, name=request.user, location=location.lower())
                 instance.days = days
                 instance.cost = cost
                 instance.save()
@@ -125,7 +125,7 @@ def edit_bid_list(request, p_id, pincode):
 
                 data = json.dumps(
                     {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
-                     'days': days, 'cost': cost, 'pincode': pincode})
+                     'days': days, 'cost': cost, 'location': location.lower()})
                 requests.post(url=url, data=data)
                 return redirect('bidding:user_bid_list')
 
@@ -143,20 +143,20 @@ def user_bid(request, p_id):
                 name = request.user
                 days = form.cleaned_data['days']
                 cost = form.cleaned_data['cost']
-                pincode = form.cleaned_data['pincode']
-                if biddedAmount.objects.filter(product=product, name=request.user, pincode=pincode).exists():
-                    instance = biddedAmount.objects.get(product=product, name=request.user, pincode=pincode)
+                location = form.cleaned_data['location']
+                if biddedAmount.objects.filter(product=product, name=request.user, location=location.lower()).exists():
+                    instance = biddedAmount.objects.get(product=product, name=request.user, location=location.lower())
                     instance.days = days
                     instance.cost = cost
                     instance.save()
                 else:
                     biddedAmount.objects.create(name=name, product=product, days=days,
-                                                cost=cost, pincode=pincode)
+                                                cost=cost, location=location.lower())
 
                 url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
 
                 data = json.dumps({'name': request.user.username, 'name_id': request.user.pk, 'product': p_id,
-                                   'days': days, 'cost': cost, 'pincode': pincode})
+                                   'days': days, 'cost': cost, 'location': location.lower()})
                 requests.post(url=url, data=data)
                 return redirect('bidding:bid_list', p_id)
         return render(request, 'bidding/user_bid.html', {'form': form})
@@ -177,13 +177,14 @@ def ordered_log(request):
         address = data['address']
         phonenum = data['phonenum']
         customer_name = data['customer_name']
+        location = data['location']
         print('prod_id', product)
         print('name_id', name)
         print('pincode', pincode)
         print('in ordered log')
         try:
 
-            user = biddedAmount.objects.get(product__prod_id=product, name_id=name, pincode=pincode)
+            user = biddedAmount.objects.get(product__prod_id=product, name_id=name, location=location.lower())
             print('got user')
             pending_orders.objects.create(product=product_name, address=address, pincode=pincode, phone_num=phonenum,
                                           customer=customer_name, name=user.name)
