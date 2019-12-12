@@ -46,6 +46,7 @@
 						{% if request.user.is_authenticated %}
     						<li><a href="{% url 'bidding:user_bid_list' %}">Your Bids</a></li>
                             <li><a href="{% url 'bidding:user_pending_orders' %}">Your pending orders</a></li>
+                            <li><a href="{% url 'bidding:delivered_orders' %}">Delivered orders</a></li>
                         {% endif %}
 					</ul>
 					<!-- /nav -->

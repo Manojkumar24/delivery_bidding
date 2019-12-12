@@ -14,7 +14,8 @@ urlpatterns = [
     path('delete_bid_list/<int:p_id>/<str:location>', views.delete_bid_list, name='delete_bid_list'),
     path('user_bid_list/', views.user_bid_list, name='user_bid_list'),
     path('user_pending_orders/', views.user_pending_orders, name='user_pending_orders'),
+    path('delivered_orders/', views.delivered_orders, name='delivered_orders'),
     path('ordered_log/', views.ordered_log, name='ordered_log'),
-
+    path('changestatus/<int:pk>', views.changestatus, name='changestatus'),
 
 ]
