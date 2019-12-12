@@ -12,10 +12,14 @@ from rest_framework.response import Response
 from bidding.models import Product, biddedAmount, pending_orders
 from .forms import RegisterForm, BiddingForm, EditForm
 
+product_api_key = '6mYgSqoG0PY7p4Eot1PjmI5urgZpl9'
+
+bidding_api_key = 'tJpwBjBDrJU2zti0buD4tEu6CteaG2'
+
 
 @login_required
 def home(request):
-    url = 'http://127.0.0.1:8000/shopping/product_list'
+    url = 'http://127.0.0.1:8000/shopping/product_list/?api_key=' + product_api_key
     response = requests.get(url)
     products = response.json()
 
@@ -90,7 +94,7 @@ def delete_bid_list(request, p_id, location):
         try:
             product = Product.objects.get(pk=p_id)
             instance = biddedAmount.objects.get(product=product, name=request.user, location=location.lower())
-            url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
+            url = 'http://127.0.0.1:8000/shopping/delivery_bid/?api_key=' + bidding_api_key
 
             data = json.dumps(
                 {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
@@ -121,7 +125,7 @@ def edit_bid_list(request, p_id, location):
                 instance.days = days
                 instance.cost = cost
                 instance.save()
-                url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
+                url = 'http://127.0.0.1:8000/shopping/delivery_bid/?api_key=' + bidding_api_key
 
                 data = json.dumps(
                     {'name': request.user.username, 'name_id': request.user.pk, 'product': product.prod_id,
@@ -153,7 +157,7 @@ def user_bid(request, p_id):
                     biddedAmount.objects.create(name=name, product=product, days=days,
                                                 cost=cost, location=location.lower())
 
-                url = 'http://127.0.0.1:8000/shopping/delivery_bid/'
+                url = 'http://127.0.0.1:8000/shopping/delivery_bid/?api_key=' + bidding_api_key
 
                 data = json.dumps({'name': request.user.username, 'name_id': request.user.pk, 'product': p_id,
                                    'days': days, 'cost': cost, 'location': location.lower()})
