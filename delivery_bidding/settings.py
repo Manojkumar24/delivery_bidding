@@ -52,6 +52,15 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'delivery_bidding.urls'
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'genericproject11@gmail.com'
+EMAIL_HOST_PASSWORD = 'iambatman@Jitesh'
+EMAIL_USE_TLS = True
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

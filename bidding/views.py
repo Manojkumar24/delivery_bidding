@@ -3,13 +3,17 @@ import json
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 import requests
+from django.template.loader import render_to_string
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from bidding.models import Product, biddedAmount, pending_orders
+from django.core.mail import send_mail, EmailMessage
+from django.conf import settings
 from .forms import RegisterForm, BiddingForm, EditForm
 
 product_api_key = '6mYgSqoG0PY7p4Eot1PjmI5urgZpl9'
@@ -22,7 +26,6 @@ def home(request):
     url = 'http://127.0.0.1:8000/shopping/product_list/?api_key=' + product_api_key
     response = requests.get(url)
     products = response.json()
-
     print('in home')
     for product in products:
         if not Product.objects.filter(prod_name=product['prod_name'],
@@ -181,7 +184,9 @@ def ordered_log(request):
         address = data['address']
         phonenum = data['phonenum']
         customer_name = data['customer_name']
+        mail = data['mail']
         location = data['location']
+        order_id = data['order_id']
         print('prod_id', product)
         print('name_id', name)
         print('pincode', pincode)
@@ -191,7 +196,7 @@ def ordered_log(request):
             user = biddedAmount.objects.get(product__prod_id=product, name_id=name, location=location.lower())
             print('got user')
             pending_orders.objects.create(product=product_name, address=address, pincode=pincode, phone_num=phonenum,
-                                          customer=customer_name, name=user.name)
+                                          customer=customer_name, name=user.name, mail=mail, order_id=order_id)
             print('created pending order')
             return Response({'created'}, status=status.HTTP_201_CREATED)
         except:
@@ -201,5 +206,40 @@ def ordered_log(request):
 
 @login_required
 def user_pending_orders(request):
-    pendingorders = pending_orders.objects.filter(name=request.user)
+    pendingorders = pending_orders.objects.filter(name=request.user).exclude(status='Delivered')
     return render(request, 'bidding/user_pending_orders.html', {'orders': pendingorders})
+
+
+@login_required
+def delivered_orders(request):
+    pendingorders = pending_orders.objects.filter(name=request.user, status='Delivered')
+    return render(request, 'bidding/delivered_orders.html', {'orders': pendingorders})
+
+
+@login_required
+def changestatus(request, pk):
+    if pk:
+        pending_order = pending_orders.objects.get(pk=pk)
+        new_status = ''
+        if pending_order.status == 'Order Received':
+            pending_order.status = 'Order Shipped'
+            new_status = 'Order Shipped'
+        elif pending_order.status == 'Order Shipped':
+            pending_order.status = 'Out for delivery'
+            new_status = 'Out for delivery'
+        elif pending_order.status == 'Out for delivery':
+            pending_order.status = 'Delivered'
+            new_status = 'Delivered'
+
+        if new_status != '':
+            subject = 'Your order status: ' + new_status
+            body = '''Dear User,
+                                You order with Order Id ''' + pending_order.order_id + ''' is changed its status to ''' + new_status + ''' You will receive your order soon.  
+                                Thank You for ordering'''
+            try:
+                send_mail(subject, body, settings.EMAIL_HOST_USER, [pending_order.mail], fail_silently=True)
+
+            except:
+                pass
+        pending_order.save()
+        return redirect('bidding:user_pending_orders')
