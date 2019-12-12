@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bidding',
+    'widget_tweaks',
     'rest_framework'
 ]
 
