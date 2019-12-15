@@ -16,9 +16,9 @@ from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 from .forms import RegisterForm, BiddingForm, EditForm
 
-product_api_key = '6mYgSqoG0PY7p4Eot1PjmI5urgZpl9'
+product_api_key = 'GQIJ8cdB0aqCVM7y449lNgsquxP2w6'
 
-bidding_api_key = 'tJpwBjBDrJU2zti0buD4tEu6CteaG2'
+bidding_api_key = 'bDjAHFychTio4BKHnd3DWEB9jKAUJl'
 
 
 @login_required
